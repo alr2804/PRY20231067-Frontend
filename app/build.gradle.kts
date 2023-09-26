@@ -48,20 +48,21 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.3")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // ARCore dependency
     implementation("com.google.ar:core:1.31.0")  // Ensure you have the latest version
-
     implementation("com.google.ar.sceneform.ux:sceneform-ux:1.17.1")
-
     implementation("com.google.ar.sceneform:core:1.17.1")
 
     //geolocation api
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
-
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    //maps
+    implementation("com.google.android.gms:play-services-maps:18.0.0")
 }

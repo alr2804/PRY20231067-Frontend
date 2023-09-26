@@ -1,60 +1,120 @@
 package com.upc.pry20231067.ui.maps
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.upc.pry20231067.R
+import com.upc.pry20231067.databinding.FragmentMapsBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MapsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+class MapsFragment : Fragment() , OnMapReadyCallback {
+
+    private var _binding: FragmentMapsBinding? = null
+
+    private val binding get() = _binding!!
+
+
+    //map variables
+    private lateinit var mMap: GoogleMap
+    private var myLocationMarker: Marker? = null
+
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            updateOrSetMyLocationMarker(location)
+        }
+
+        // Other required methods...
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+
+
+        _binding = FragmentMapsBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        return root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MapsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MapsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        // Adjust location button if needed
+        val locationButton = (view?.findViewById<View>(Integer.parseInt("1"))?.parent as View?)?.findViewById<View>(Integer.parseInt("2"))
+        val layoutParams = locationButton?.layoutParams as? RelativeLayout.LayoutParams
+        layoutParams?.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+        layoutParams?.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
+        layoutParams?.setMargins(0, 0, 30, 180)
+
+        setMyLocationEnabled()
+    }
+
+    private fun updateOrSetMyLocationMarker(location: Location) {
+        val latLng = LatLng(location.latitude, location.longitude)
+        if (myLocationMarker == null) {
+            myLocationMarker = mMap.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title("My Location")
+            )
+        } else {
+            myLocationMarker?.position = latLng
+        }
+    }
+
+    private fun setMyLocationEnabled() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+
+            mMap.isMyLocationEnabled = true
+
+            var locationManager =
+                requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10f, locationListener)
+        } else {
+            Toast.makeText(requireContext(), "Location permission not granted", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
 }
