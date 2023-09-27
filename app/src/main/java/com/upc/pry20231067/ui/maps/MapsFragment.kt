@@ -2,6 +2,7 @@ package com.upc.pry20231067.ui.maps
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -12,10 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,6 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.upc.pry20231067.ArActivity
 import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentMapsBinding
 
@@ -54,6 +54,11 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
+
+
+
     }
 
     override fun onCreateView(
@@ -64,6 +69,14 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+//        assign button to create arview activity
+        binding.arButton.setOnClickListener {
+
+            val intent = Intent(requireContext(), ArActivity::class.java)
+            startActivity(intent)
+
+        }
 
         return root
     }
