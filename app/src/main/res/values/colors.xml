@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <!--    MI PALETA DE COLORES-->
+    <color name="green_app">#3AED0F</color>
+    <color name="black_app">#3E3C3B</color>
+    <color name="black_app_secondary">#282726</color>
+    <color name="white_app">#e4ede4</color>
+    <color name="warning">#CF0C06</color>
 </resources>

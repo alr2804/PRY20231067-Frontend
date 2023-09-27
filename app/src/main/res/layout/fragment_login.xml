@@ -1,28 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.LoginFragment">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/black_app"
+    android:gravity="center">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textView2"
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ar_image"
+        android:layout_marginBottom="20dp"
+        app:tint="@color/white_app" />
+
+    <EditText
+        android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        tools:layout_editor_absoluteX="-203dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:padding="10dp"
+        android:hint="@string/input_hint_username"
+        android:background="@color/white_app"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/input_hint_password"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button"
+        android:text="@string/button_text_sign_in" />
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_secondary"
+        android:text="@string/button_text_sign_up" />
+
+    <TextView
+        android:id="@+id/textViewForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView2" />
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:text="@string/forgot_password"
+        android:textColor="@android:color/darker_gray" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

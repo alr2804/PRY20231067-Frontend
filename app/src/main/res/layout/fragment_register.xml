@@ -1,14 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.RegisterFragment">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/black_app"
+    android:gravity="center">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ar_image"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="@null"
+        app:tint="@color/white_app" />
+
+    <EditText
+        android:id="@+id/editTextFirstName"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="40dp"
+        android:hint="@string/input_hint_firstname"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:inputType="text" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/editTextLastName"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:hint="@string/input_hint_lastname"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:hint="@string/input_hint_email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/editTextUsername"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:hint="@string/input_hint_username"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:background="@color/white_app"
+        android:hint="@string/input_hint_password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button"
+        android:text="@string/button_text_sign_up" />
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_button_secondary"
+        android:text="@string/button_text_sign_in" />
+
+</LinearLayout>

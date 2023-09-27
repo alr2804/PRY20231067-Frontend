@@ -5,56 +5,84 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.upc.pry20231067.R
+import com.upc.pry20231067.databinding.FragmentMapsBinding
+import com.upc.pry20231067.databinding.FragmentRegisterBinding
+import com.upc.pry20231067.models.RegisterRequest
+import com.upc.pry20231067.services.ApiService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
+
+    val url: String = "https://api-ar-app.onrender.com/auth/sign-up"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
+        buttonsNavigation()
+
+        return root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+    fun buttonsNavigation(){
+        val btn = binding.buttonLogin
+        btn.setOnClickListener{
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
+
+        val btnRegister = binding.buttonRegister
+        btnRegister.setOnClickListener{
+            register()
+//            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToNavGraph2())
+        }
+    }
+
+    private fun getRetrofit(): Retrofit {
+        return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    private fun register(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val firstnameValue = binding.editTextFirstName.text.toString().trim()
+            val lastnameValue = binding.editTextLastName.text.toString().trim()
+            val emailValue = binding.editTextEmail.text.toString().trim()
+            val usernameValue = binding.editTextUsername.text.toString().trim()
+            val passwordValue = binding.editTextPassword.text.toString().trim()
+
+            val userRegister = RegisterRequest(firstnameValue, lastnameValue, emailValue, usernameValue, passwordValue)
+            val call = getRetrofit().create(ApiService::class.java).register(url, userRegister)
+//            val responseLogin = call.body()
+            activity?.runOnUiThread{
+                if(call.isSuccessful){
+//                    val userInfo = responseLogin?.data
+                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                }else{
+                    Toast.makeText(context, "Invalid register", Toast.LENGTH_SHORT)
                 }
             }
+        }
     }
 }
