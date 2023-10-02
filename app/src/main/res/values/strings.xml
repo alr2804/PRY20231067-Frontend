@@ -53,7 +53,6 @@
     <string name="title_activity_login">LoginActivity</string>
 
 
-
     <!-- Auth-->
     <string name="input_hint_firstname">Nombre</string>
     <string name="input_hint_lastname">Torres</string>
