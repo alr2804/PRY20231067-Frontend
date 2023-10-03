@@ -10,7 +10,9 @@ import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.PixelCopy
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +29,7 @@ import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ShapeFactory
+import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
 import com.upc.pry20231067.common.Utils.showToast
@@ -93,7 +96,7 @@ class ArActivity : AppCompatActivity() {
             val anchor = hitResult.createAnchor()
             val anchorNode = AnchorNode(anchor)
             anchorNode.setParent(arFragment.arSceneView.scene)
-            createCube(anchorNode)
+            createCube(anchorNode, Vector3(0.1f, 0.1f, 0.1f))
         }
 
 
@@ -106,18 +109,43 @@ class ArActivity : AppCompatActivity() {
 
     }
 
-    private fun createCube(anchorNode: AnchorNode) {
+    private fun createCube(anchorNode: AnchorNode, cubeSize: Vector3) {
         MaterialFactory.makeOpaqueWithColor(this, Color(0.0f, 0.5f, 0.5f))
             .thenAccept { material ->
                 val cubeRenderable = ShapeFactory.makeCube(
-                    Vector3(0.1f, 0.1f, 0.1f),   // Size of the cube
-                    Vector3(0f, 0.1f, 0f),  // Center of the cube
+                    cubeSize,   // Size of the cube
+                    Vector3(0f, cubeSize.y / 2, 0f),  // Center of the cube
                     material
                 )
 
                 val cubeNode = TransformableNode(arFragment.transformationSystem)
                 cubeNode.renderable = cubeRenderable
                 cubeNode.setParent(anchorNode)
+
+                // Programmatically create a TextView
+                val textView = TextView(this)
+                textView.text = "Your Text"
+                textView.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+
+                textView.setTextColor(android.graphics.Color.rgb(0, 0, 0))
+                textView.setBackgroundColor(android.graphics.Color.argb(50, 255, 255, 255))
+                // Create the text renderable
+                ViewRenderable.builder()
+                    .setView(this, textView)
+                    .build()
+                    .thenAccept { viewRenderable ->
+                        val textNode = Node()
+                        textNode.renderable = viewRenderable
+                        textNode.setParent(cubeNode)
+
+                        // Adjust the position of the text so that it appears on top of the cube
+                        textNode.localPosition = Vector3(0f, cubeSize.y + 0.05f + 0.01f, 0f)
+
+                    }
+
 
                 cubeNode.setOnTapListener { _, _ ->
                     if (cubeNode == arFragment.transformationSystem.selectedNode) {
