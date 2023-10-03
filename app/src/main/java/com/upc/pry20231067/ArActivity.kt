@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.view.MotionEvent
 import android.view.PixelCopy
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +22,7 @@ import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.sceneform.AnchorNode
 import com.google.ar.sceneform.ArSceneView
+import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.MaterialFactory
@@ -42,6 +46,11 @@ class ArActivity : AppCompatActivity() {
     lateinit var arCoreSessionHelper: ARCoreSessionLifecycleHelper
     private var arSession: Session? = null
 
+    // Reference to the currently selected node
+    private var selectedNode: TransformableNode? = null
+    private lateinit var deleteButton: Button
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +64,27 @@ class ArActivity : AppCompatActivity() {
         arFragment = supportFragmentManager.findFragmentById(R.id.arFragment) as ArFragment
         arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
 
+
+
         try {
             arSession = Session(this)
         } catch (e: UnavailableException) {
             // Handle exceptions: ARCore not supported or some other issue.
             showToast(this, e.toString())
+        }
+
+
+
+
+        deleteButton = binding.deleteButton
+        deleteButton.visibility = View.GONE
+
+        deleteButton.setOnClickListener {
+            selectedNode?.let { node ->
+                node.setParent(null)  // This removes the TransformableNode from its parent AnchorNode
+                deleteButton.visibility = View.GONE
+                selectedNode = null   // Nullify the reference
+            }
         }
 
 
@@ -70,6 +95,9 @@ class ArActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
             createCube(anchorNode)
         }
+
+
+
 
         //take photo
         binding.captureButton.setOnClickListener{
@@ -90,7 +118,20 @@ class ArActivity : AppCompatActivity() {
                 val cubeNode = TransformableNode(arFragment.transformationSystem)
                 cubeNode.renderable = cubeRenderable
                 cubeNode.setParent(anchorNode)
+
+                cubeNode.setOnTapListener { _, _ ->
+                    if (cubeNode == arFragment.transformationSystem.selectedNode) {
+                        selectedNode = cubeNode
+                        deleteButton.visibility = View.VISIBLE
+                    } else {
+                        deleteButton.visibility = View.GONE
+                        selectedNode = null
+                    }
+                }
+
+
                 cubeNode.select()
+
 
             }
     }
@@ -134,6 +175,7 @@ class ArActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
 }

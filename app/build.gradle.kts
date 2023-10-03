@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.upc.pry20231067"
-        minSdk = 26
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
