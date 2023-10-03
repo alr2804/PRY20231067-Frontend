@@ -24,6 +24,9 @@ class PlaceItemFragment : Fragment() {
 
         val idPlace = arguments?.getString("idPlace")
 
+
+
+        val _id = idPlace?.substringAfter("_id=")?.substringBefore(",")
         val name = idPlace?.substringAfter("name=")?.substringBefore(",")
         val description = idPlace?.substringAfter("description=")?.substringBefore(",")
         val photo = idPlace?.substringAfter("photo=")?.dropLast(1)
@@ -36,7 +39,7 @@ class PlaceItemFragment : Fragment() {
 
         val btn_ver_reseñas = binding.btnResenas
         btn_ver_reseñas.setOnClickListener{
-            findNavController().navigate(PlaceItemFragmentDirections.actionPlaceItemFragmentToReviewFragment())
+            findNavController().navigate(PlaceItemFragmentDirections.actionPlaceItemFragmentToReviewFragment("$_id"))
         }
 
         return binding.root
