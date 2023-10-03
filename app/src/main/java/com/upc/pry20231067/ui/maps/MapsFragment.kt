@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.upc.pry20231067.ArActivity
 import com.upc.pry20231067.R
+import com.upc.pry20231067.common.Utils.showToast
 import com.upc.pry20231067.databinding.FragmentMapsBinding
 
 
@@ -35,14 +37,20 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
     private val binding get() = _binding!!
 
 
+    private var currentLocation: LatLng? = null
+
+
     //map variables
     private lateinit var mMap: GoogleMap
     private var myLocationMarker: Marker? = null
 
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            val latLng = LatLng(location.latitude, location.longitude)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+            currentLocation = LatLng(location.latitude, location.longitude)
+
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
             updateOrSetMyLocationMarker(location)
         }
 
@@ -67,8 +75,35 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 //        assign button to create arview activity
         binding.arButton.setOnClickListener {
 
-            val intent = Intent(requireContext(), ArActivity::class.java)
-            startActivity(intent)
+            //validation of zone
+            val currentLocation = getCurrentLocation()
+            val variationZone = 1
+
+            if(currentLocation != null){
+                //get all locations
+                
+
+                var topLeft = LatLng(currentLocation.latitude - variationZone, currentLocation.longitude -variationZone)     // Replace with the top-left corner of your bounding box
+                var bottomRight = LatLng(currentLocation.latitude + variationZone, currentLocation.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
+
+//                topLeft = LatLng(1.0, 1.0)
+//                bottomRight = LatLng(1.0, 1.0)
+
+                if (isWithinBoundingBox(currentLocation, topLeft, bottomRight)) {
+                    val intent = Intent(requireContext(), ArActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    // Handle the scenario when the location is outside the bounding box, if needed.
+                    showToast(requireContext(), "outside of ARZone")
+                }
+
+            }
+            else {
+                showToast(requireContext(), "Not able to get location")
+            }
+
+
+
 
         }
 
@@ -120,6 +155,29 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         } else {
             Toast.makeText(requireContext(), "Location permission not granted", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun isWithinBoundingBox(point: LatLng, topLeft: LatLng, bottomRight: LatLng): Boolean {
+        return point.latitude in topLeft.latitude..bottomRight.latitude &&
+                point.longitude in topLeft.longitude..bottomRight.longitude
+    }
+
+    private fun getCurrentLocation(): LatLng? {
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Handle the case where you don't have permission
+            return null
+        }
+
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        return if (location != null) LatLng(location.latitude, location.longitude) else null
     }
 
 
