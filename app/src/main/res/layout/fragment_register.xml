@@ -32,7 +32,7 @@
         android:layout_marginTop="10dp"
         android:padding="10dp"
         android:background="@color/white_app"
-        android:hint="@string/input_hint_lastname"
+        android:hint="Apellido"
         android:inputType="text" />
 
     <EditText

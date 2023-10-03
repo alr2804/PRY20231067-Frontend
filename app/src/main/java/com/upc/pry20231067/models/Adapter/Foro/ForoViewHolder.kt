@@ -15,7 +15,7 @@ class ForoViewHolder(view: View): ViewHolder(view) {
     val contentItem = view.findViewById<TextView>(R.id.tv_content_item_post_foro)
 
     fun render(newModel: PostForo){
-        titleItem.text = newModel.content
+        titleItem.text = newModel.title
         contentItem.text = newModel.content
 
         itemView.setOnClickListener{

@@ -35,7 +35,11 @@
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_navigation_profile_to_editProfileFragment"
-            app:destination="@id/editProfileFragment" />
+            app:destination="@id/editProfileFragment">
+            <argument
+                android:name="idUser"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/action_navigation_profile_to_souvenirFragment"
             app:destination="@id/souvenirFragment" />
@@ -47,7 +51,11 @@
         tools:layout="@layout/fragment_place_item">
         <action
             android:id="@+id/action_placeItemFragment_to_reviewFragment"
-            app:destination="@id/reviewFragment" />
+            app:destination="@id/reviewFragment">
+            <argument
+                android:name="idPlace"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/reviewFragment"
@@ -56,7 +64,16 @@
         tools:layout="@layout/fragment_review" >
         <action
             android:id="@+id/action_reviewFragment_to_addReviewFragment"
-            app:destination="@id/addReviewFragment" />
+            app:destination="@id/addReviewFragment">
+
+            <argument
+                android:name="idPlace"
+                app:argType="string" />
+
+            <argument
+                android:name="idUser"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/addReviewFragment"
@@ -72,9 +89,13 @@
         android:name="com.upc.pry20231067.ui.profile.EditProfileFragment"
         android:label="EditProfileFragment"
         tools:layout="@layout/fragment_edit_profile">
+
         <action
             android:id="@+id/action_editProfileFragment_to_navigation_profile"
-            app:destination="@id/navigation_profile" />
+            app:destination="@id/navigation_profile">
+
+
+        </action>
     </fragment>
     <fragment
         android:id="@+id/souvenirFragment"

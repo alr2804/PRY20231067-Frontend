@@ -13,12 +13,19 @@ import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentLoginBinding
 import com.upc.pry20231067.databinding.FragmentRegisterBinding
 import com.upc.pry20231067.models.LoginRequest
+import com.upc.pry20231067.models.LoginResponse
+import com.upc.pry20231067.models.PlaceResponse
 import com.upc.pry20231067.services.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class LoginFragment : Fragment() {
 
@@ -57,41 +64,63 @@ class LoginFragment : Fragment() {
         val btnLogin = binding.buttonLogin
         btnLogin.setOnClickListener{
 //            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToNavGraph2())
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-//            login()
+//            val intent = Intent(requireContext(), MainActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            startActivity(intent)
+            login()
         }
     }
 
     private fun getRetrofit(): Retrofit {
+        // Crear una instancia de OkHttpClient personalizada
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
+            .connectTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de conexión
+            .build()
+
         return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
             .build()
     }
 
     private fun login(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val usernameValue = binding.editTextUsername.text.toString().trim()
-            val passwordValue = binding.editTextPassword.text.toString().trim()
-            val userLogin = LoginRequest(usernameValue, passwordValue)
-            val call = getRetrofit().create(ApiService::class.java).login(url, userLogin)
+        val usernameValue = binding.editTextUsername.text.toString().trim()
+        val passwordValue = binding.editTextPassword.text.toString().trim()
+        val userLogin = LoginRequest(usernameValue, passwordValue)
+        val call = getRetrofit().create(ApiService::class.java).login(url, userLogin)
 //            val responseLogin = call.body()
-            activity?.runOnUiThread{
-                if(call.isSuccessful){
-//                    val userInfo = responseLogin?.data
-//                    val intent = Intent(activity, PagesActivity()::class.java)
-//                    intent.putExtra("userID", responseLogin?.data?._id)
-//                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToNavGraph2())
+        call.enqueue(object: Callback<LoginResponse> {
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>){
+                if(response.isSuccessful){
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    val idUser = response.body()?.data?._id
+                    intent.putExtra("idUser", idUser)
                     startActivity(intent)
-
-                }else{
-                    Toast.makeText(context, "Invalid Login", Toast.LENGTH_SHORT)
+                } else {
+                    if(response.code() == 404){
+                        Toast.makeText(requireContext(), "Username or Password invalid", Toast.LENGTH_SHORT)
+                    }
                 }
             }
-        }
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+
+            }
+
+        })
+
+//            if(call.isSuccessful){
+////                    val userInfo = responseLogin?.data
+////                    val intent = Intent(activity, PagesActivity()::class.java)
+////                    intent.putExtra("userID", responseLogin?.data?._id)
+////                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToNavGraph2())
+//
+//
+//            }else{
+//                Toast.makeText(context, "Invalid Login", Toast.LENGTH_SHORT)
+//            }
     }
 
 

@@ -15,12 +15,14 @@ class ReviewViewHolder(view: View): ViewHolder(view) {
 
     val nameUser = view.findViewById<TextView>(R.id.tv_name_user_review)
     val content = view.findViewById<TextView>(R.id.tv_content_review)
-//    val rating = view.findViewById<RatingBar>(R.id.rating_review)
+    val rating = view.findViewById<RatingBar>(R.id.rating_review)
 
     fun render(reviewModel: Review){
-        nameUser.text = reviewModel.nameUser
+        val user = reviewModel._user.toString()
+        val displayName = user.substringAfter("firstname=")?.substringBefore(",") + " " + user.substringAfter("lastname=")?.substringBefore(",")
+        nameUser.text = displayName
         content.text = reviewModel.content
-//        rating.rating = reviewModel.rating
+        rating.rating = reviewModel.rating
 
         itemView.setOnClickListener{
             print("Click item")

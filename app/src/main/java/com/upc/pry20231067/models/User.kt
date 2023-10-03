@@ -2,7 +2,7 @@ package com.upc.pry20231067.models
 
 import com.google.gson.annotations.SerializedName
 
-class User (
+data class User (
 
     @SerializedName("_id")
     private val _id: String,
