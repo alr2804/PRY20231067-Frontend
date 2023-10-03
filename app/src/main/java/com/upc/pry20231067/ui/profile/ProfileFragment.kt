@@ -11,10 +11,16 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentProfileBinding
+import com.upc.pry20231067.models.RegisterResponse
+import com.upc.pry20231067.models.ReviewUniqueResponse
+import com.upc.pry20231067.models.UserResponseUnique
 import com.upc.pry20231067.services.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
@@ -62,30 +68,34 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getUserInfo(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val call = getRetrofit().create(ApiService::class.java).getUserByID("$idUser")
-            val response = call.body()
-            activity?.runOnUiThread{
-                if(call.isSuccessful){
-                    val userData = response?.data
-                    val userString = userData.toString()
 
+        val call = getRetrofit().create(ApiService::class.java).getUserByID("$idUser")
+        call.enqueue(object: Callback<UserResponseUnique>{
+            override fun onResponse(call: Call<UserResponseUnique>, response: Response<UserResponseUnique>){
+                if(response.isSuccessful){
+
+                    val userString = response.body()?.data.toString()
                     val id = userString?.substringAfter("_id=")?.substringBefore(",")
                     val firstname = userString?.substringAfter("firstname=")?.substringBefore(",")
                     val lastname = userString?.substringAfter("lastname=")?.substringBefore(",")
                     val username = userString?.substringAfter("username=")?.substringBefore(",")
                     val urlImageProfile = userString?.substringAfter("urlImageProfile=")?.substringBefore(",")
                     val email = userString?.substringAfter("email=")?.substringBefore(",")//
-
+//
                     binding.tvFirstname.text = firstname
                     binding.tvLastname.text = lastname
                     binding.tvUsername.text = username
                     binding.tvEmail.text = email
                     Glide.with(binding.imageView3.context).load(urlImageProfile).into(binding.imageView3)
-//                    placeList.addAll(placeData)
-//                    adapter.notifyDataSetChanged()
+
+
                 }
             }
-        }
+
+            override fun onFailure(call: Call<UserResponseUnique>, t: Throwable) {
+
+            }
+        })
+
     }
 }

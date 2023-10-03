@@ -10,6 +10,7 @@ import com.upc.pry20231067.models.RegisterResponse
 import com.upc.pry20231067.models.ReviewRequest
 import com.upc.pry20231067.models.ReviewResponse
 import com.upc.pry20231067.models.ReviewResponseUnique
+import com.upc.pry20231067.models.ReviewUniqueResponse
 import com.upc.pry20231067.models.UpdateUserRequest
 import com.upc.pry20231067.models.UpdateUserResponse
 import com.upc.pry20231067.models.UserResponse
@@ -38,13 +39,13 @@ interface ApiService {
     fun getReviewByPlaceID(@Path("id") idPlace: String): Call<ReviewResponse>
 
     @POST("reviews")
-    fun createReview(@Body request: ReviewRequest): Call<ReviewResponseUnique>
+    fun createReview(@Body request: ReviewRequest): Call<ReviewUniqueResponse>
 
     @GET("postsForo")
     suspend fun getPostsForo(): Response<PostForoResponse>
 
     @GET("users/{id}")
-    suspend fun getUserByID(@Path("id") userId: String): Response<UserResponseUnique>
+    fun getUserByID(@Path("id") userId: String): Call<UserResponseUnique>
 
     @POST
     fun login(@Url url: String, @Body request: LoginRequest): Call<LoginResponse>

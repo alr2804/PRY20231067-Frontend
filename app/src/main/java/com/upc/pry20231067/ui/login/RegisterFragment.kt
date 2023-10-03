@@ -1,5 +1,6 @@
 package com.upc.pry20231067.ui.login
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.upc.pry20231067.MainActivity
 import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentMapsBinding
 import com.upc.pry20231067.databinding.FragmentRegisterBinding
@@ -77,8 +79,13 @@ class RegisterFragment : Fragment() {
 //            val responseLogin = call.body()
             activity?.runOnUiThread{
                 if(call.isSuccessful){
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    val idUser = call.body()?.data?._id
+                    intent.putExtra("idUser", idUser)
+                    startActivity(intent)
 //                    val userInfo = responseLogin?.data
-                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+//                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                 }else{
                     Toast.makeText(context, "Invalid register", Toast.LENGTH_SHORT)
                 }

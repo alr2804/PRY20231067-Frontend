@@ -10,6 +10,7 @@ import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentAddReviewBinding
 import com.upc.pry20231067.models.ReviewRequest
 import com.upc.pry20231067.models.ReviewResponseUnique
+import com.upc.pry20231067.models.ReviewUniqueResponse
 import com.upc.pry20231067.models.UpdateUserResponse
 import com.upc.pry20231067.services.ApiService
 import okhttp3.OkHttpClient
@@ -70,16 +71,19 @@ class AddReviewFragment : Fragment() {
         val reviewReq = ReviewRequest(content, rating, idUser!!, idPlace!!)
         val call = getRetrofit().create(ApiService::class.java).createReview(reviewReq)
 
-        call.enqueue(object: Callback<ReviewResponseUnique> {
-            override fun onResponse(call: Call<ReviewResponseUnique>, response: Response<ReviewResponseUnique>){
+        call.enqueue(object: Callback<ReviewUniqueResponse> {
+            override fun onResponse(call: Call<ReviewUniqueResponse>, response: Response<ReviewUniqueResponse>){
                 if(response.isSuccessful){
+
                     findNavController().navigate(AddReviewFragmentDirections.actionAddReviewFragmentToReviewFragment())
+
                 }
             }
 
-            override fun onFailure(call: Call<ReviewResponseUnique>, t: Throwable) {
+            override fun onFailure(call: Call<ReviewUniqueResponse>, t: Throwable) {
 
             }
+
 
 
         })
