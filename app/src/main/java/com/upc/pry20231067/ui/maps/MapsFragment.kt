@@ -43,6 +43,15 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
     private var locationMarkers: MutableList<Marker>? = null
 
 
+    // Sample locations from Peru
+    private val locationsList : MutableList<NamedLocation> = mutableListOf(
+        NamedLocation(LatLng(-12.0464, -77.0428), "Lima"),
+        NamedLocation(LatLng(-13.5319, -71.9675), "Cusco"),
+        NamedLocation(LatLng(-16.4090, -71.5375), "Arequipa")
+    )
+
+
+
     //map variables
     private lateinit var mMap: GoogleMap
     private var myLocationMarker: Marker? = null
@@ -54,21 +63,13 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
              val test = LatLng(currentLocation!!.latitude+ 1, currentLocation!!.longitude + 1)
 
-
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
 //            updateOrSetMyLocationMarker(location)
-            // Sample locations from Peru
-            val locationsArray = arrayOf(
-                NamedLocation(LatLng(-12.0464, -77.0428), "Lima"),
-                NamedLocation(LatLng(-13.5319, -71.9675), "Cusco"),
-                NamedLocation(LatLng(-16.4090, -71.5375), "Arequipa")
-            )
 
-            updateOrSetLocationMarkers(locationsArray);
+            updateOrSetLocationMarkers(locationsList);
         }
 
 
-        // Other required methods...
     }
 
 
@@ -94,16 +95,24 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
             val variationZone = 1
 
             if(currentLocation != null){
-                //get all locations
-                
+                var valid = false
 
-                var topLeft = LatLng(currentLocation.latitude - variationZone, currentLocation.longitude -variationZone)     // Replace with the top-left corner of your bounding box
-                var bottomRight = LatLng(currentLocation.latitude + variationZone, currentLocation.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
+                locationsList.add(NamedLocation(LatLng(currentLocation.latitude, currentLocation.longitude), "My Position"))
+
+                //get all locations
+                for (place in locationsList){
+                    var topLeft = LatLng(place.latLng.latitude - variationZone, place.latLng.longitude -variationZone)     // Replace with the top-left corner of your bounding box
+                    var bottomRight = LatLng(place.latLng.latitude + variationZone, place.latLng.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
+                    if (isWithinBoundingBox(currentLocation, topLeft, bottomRight)) valid = true;
+                }
+
+//                var topLeft = LatLng(currentLocation.latitude - variationZone, currentLocation.longitude -variationZone)     // Replace with the top-left corner of your bounding box
+//                var bottomRight = LatLng(currentLocation.latitude + variationZone, currentLocation.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
 
 //                topLeft = LatLng(1.0, 1.0)
 //                bottomRight = LatLng(1.0, 1.0)
 
-                if (isWithinBoundingBox(currentLocation, topLeft, bottomRight)) {
+                if (valid) {
                     val intent = Intent(requireContext(), ArActivity::class.java)
                     startActivity(intent)
                 } else {
@@ -125,6 +134,8 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+//        updateOrSetLocationMarkers(locationsList);
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -153,7 +164,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         }
     }
 
-    private fun updateOrSetLocationMarkers(locations: Array<NamedLocation>) {
+    private fun updateOrSetLocationMarkers(locations: MutableList<NamedLocation> = locationsList) {
         // Ensure we have an initialized list of markers
         if (locationMarkers == null) {
             locationMarkers = mutableListOf()
