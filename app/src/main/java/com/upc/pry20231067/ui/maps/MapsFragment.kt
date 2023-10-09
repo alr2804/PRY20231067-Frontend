@@ -29,6 +29,7 @@ import com.upc.pry20231067.common.Utils.showToast
 import com.upc.pry20231067.databinding.FragmentMapsBinding
 
 
+data class NamedLocation(val latLng: LatLng, val name: String)
 
 class MapsFragment : Fragment() , OnMapReadyCallback {
 
@@ -38,6 +39,8 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
 
     private var currentLocation: LatLng? = null
+
+    private var locationMarkers: MutableList<Marker>? = null
 
 
     //map variables
@@ -49,10 +52,21 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
             currentLocation = LatLng(location.latitude, location.longitude)
 
+             val test = LatLng(currentLocation!!.latitude+ 1, currentLocation!!.longitude + 1)
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
-            updateOrSetMyLocationMarker(location)
+
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
+//            updateOrSetMyLocationMarker(location)
+            // Sample locations from Peru
+            val locationsArray = arrayOf(
+                NamedLocation(LatLng(-12.0464, -77.0428), "Lima"),
+                NamedLocation(LatLng(-13.5319, -71.9675), "Cusco"),
+                NamedLocation(LatLng(-16.4090, -71.5375), "Arequipa")
+            )
+
+            updateOrSetLocationMarkers(locationsArray);
         }
+
 
         // Other required methods...
     }
@@ -101,10 +115,6 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
             else {
                 showToast(requireContext(), "Not able to get location")
             }
-
-
-
-
         }
 
         return root
@@ -140,6 +150,42 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
             )
         } else {
             myLocationMarker?.position = latLng
+        }
+    }
+
+    private fun updateOrSetLocationMarkers(locations: Array<NamedLocation>) {
+        // Ensure we have an initialized list of markers
+        if (locationMarkers == null) {
+            locationMarkers = mutableListOf()
+        }
+
+        // Update existing markers or add new ones
+        for (i in locations.indices) {
+            val namedLocation = locations[i]
+            if (i < locationMarkers!!.size) {
+                // Update existing marker
+                locationMarkers!![i].position = namedLocation.latLng
+                locationMarkers!![i].title = namedLocation.name
+            } else {
+                // Add new marker
+                val marker = mMap.addMarker(
+                    MarkerOptions()
+                        .position(namedLocation.latLng)
+                        .title(namedLocation.name)
+                )
+                if (marker != null) {
+                    locationMarkers!!.add(marker)
+                }
+            }
+        }
+
+        // Remove excess markers if there are any
+        val excess = locationMarkers!!.size - locations.size
+        if (excess > 0) {
+            for (i in 1..excess) {
+                locationMarkers!![locationMarkers!!.size - i].remove()
+            }
+            locationMarkers = locationMarkers!!.subList(0, locationMarkers!!.size - excess)
         }
     }
 
