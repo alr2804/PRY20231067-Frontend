@@ -18,6 +18,7 @@ import com.upc.pry20231067.models.UserResponseUnique
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -29,11 +30,14 @@ interface ApiService {
     @GET
     suspend fun getUser(@Url url: String): Response<UserResponse>
 
+    @DELETE("users/{id}")
+    fun deleteUser(@Path("id") userId: String): Call<UserResponseUnique>
+
     @GET("places")
     fun getPlaces(): Call<PlaceResponse>
 
     @GET("news")
-    suspend fun getNews(): Response<NewsResponse>
+    fun getNews(): Call<NewsResponse>
 
     @GET("reviews/getReviewByPlaceID/{id}")
     fun getReviewByPlaceID(@Path("id") idPlace: String): Call<ReviewResponse>
@@ -41,8 +45,7 @@ interface ApiService {
     @POST("reviews")
     fun createReview(@Body request: ReviewRequest): Call<ReviewUniqueResponse>
 
-    @GET("postsForo")
-    suspend fun getPostsForo(): Response<PostForoResponse>
+
 
     @GET("users/{id}")
     fun getUserByID(@Path("id") userId: String): Call<UserResponseUnique>
@@ -55,4 +58,7 @@ interface ApiService {
 
     @PUT("users/{id}")
     fun updateUser(@Path("id") userId: String, @Body request: UpdateUserRequest): Call<UpdateUserResponse>
+
+    @GET("postsForo")
+    fun getPostsForo(): Call<PostForoResponse>
 }

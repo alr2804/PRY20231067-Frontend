@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.upc.pry20231067.MainActivity
@@ -17,8 +18,10 @@ import com.upc.pry20231067.services.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class RegisterFragment : Fragment() {
@@ -27,6 +30,8 @@ class RegisterFragment : Fragment() {
     private val binding get() = _binding!!
 
     val url: String = "https://api-ar-app.onrender.com/auth/sign-up"
+
+    lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +51,11 @@ class RegisterFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        progressBar = binding.fragmentRegisterProgressBar
+    }
+
 
     fun buttonsNavigation(){
         val btn = binding.buttonLogin
@@ -61,12 +71,20 @@ class RegisterFragment : Fragment() {
     }
 
     private fun getRetrofit(): Retrofit {
+        // Crear una instancia de OkHttpClient personalizada
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
+            .connectTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de conexión
+            .build()
+
         return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
             .build()
     }
 
     private fun register(){
+        progressBar.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             val firstnameValue = binding.editTextFirstName.text.toString().trim()
             val lastnameValue = binding.editTextLastName.text.toString().trim()
@@ -79,6 +97,7 @@ class RegisterFragment : Fragment() {
 //            val responseLogin = call.body()
             activity?.runOnUiThread{
                 if(call.isSuccessful){
+                    progressBar.visibility = View.GONE
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     val idUser = call.body()?.data?._id

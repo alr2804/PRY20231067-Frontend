@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ import com.upc.pry20231067.models.Adapter.Review.ReviewAdapter
 import com.upc.pry20231067.models.PlaceResponse
 import com.upc.pry20231067.models.ReviewResponse
 import com.upc.pry20231067.services.ApiService
+import com.upc.pry20231067.services.RetrofitClient
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,12 +32,15 @@ import java.util.concurrent.TimeUnit
 
 class ReviewFragment : Fragment() {
 
+    private val retrofitService = RetrofitClient.getRetrofit()
+
     var idPlace: String? = ""
     var idUser: String? = ""
     private var _binding: FragmentReviewBinding? = null
 
     private val reviewList = mutableListOf<Review>()
     private lateinit var adapter: ReviewAdapter
+    lateinit var progressBar: ProgressBar
     private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,12 +56,13 @@ class ReviewFragment : Fragment() {
             findNavController().navigate(ReviewFragmentDirections.actionReviewFragmentToAddReviewFragment(idPlace!!, idUser!!))
         }
 
-        getReviews()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        progressBar = binding.fragmentReviewProgressBar
+        getReviews()
         initRecyclerView(view)
     }
 
@@ -68,7 +74,6 @@ class ReviewFragment : Fragment() {
     }
 
     private fun getRetrofit(): Retrofit {
-
         // Crear una instancia de OkHttpClient personalizada
         val okHttpClient = OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
@@ -81,22 +86,26 @@ class ReviewFragment : Fragment() {
             .build()
     }
 
+
     private fun getReviews(){
+        progressBar.visibility = View.VISIBLE
         val call = getRetrofit().create(ApiService::class.java).getReviewByPlaceID(idPlace!!)
 
         call.enqueue(object: Callback<ReviewResponse> {
             override fun onResponse(call: Call<ReviewResponse>, response: Response<ReviewResponse>){
                 if(response.isSuccessful){
+                    progressBar.visibility = View.GONE
                     val places = response.body()
                     val placeData = places?.data ?: emptyList()
                     reviewList.clear()
                     reviewList.addAll(placeData)
                     adapter.notifyDataSetChanged()
-
                 }
+                progressBar.visibility = View.GONE
             }
             override fun onFailure(call: Call<ReviewResponse>, t: Throwable) {
                 t.printStackTrace()
+                progressBar.visibility = View.GONE
                 if(t is SocketTimeoutException){
                     Toast.makeText(requireContext(), "Tiempo excedido de espera", Toast.LENGTH_SHORT)
                 }

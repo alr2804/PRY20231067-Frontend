@@ -19,7 +19,7 @@ class ReviewViewHolder(view: View): ViewHolder(view) {
 
     fun render(reviewModel: Review){
         val user = reviewModel._user.toString()
-        val displayName = user.substringAfter("firstname=")?.substringBefore(",") + " " + user.substringAfter("lastname=")?.substringBefore(",")
+        val displayName = user.substringAfter("firstname=").substringBefore(",") + " " + user.substringAfter("lastname=").substringBefore(",")
         nameUser.text = displayName
         content.text = reviewModel.content
         rating.rating = reviewModel.rating

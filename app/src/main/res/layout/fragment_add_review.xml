@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ProgressBar
+        android:id="@+id/fragment_add_review_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintTop_toBottomOf="@+id/ll_header_add_review"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/ll_header_add_review"
         android:layout_width="match_parent"

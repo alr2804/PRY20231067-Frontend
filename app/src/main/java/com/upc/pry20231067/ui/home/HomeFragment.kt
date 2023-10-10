@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -15,12 +16,8 @@ import com.upc.pry20231067.data.Place.Place
 import com.upc.pry20231067.databinding.FragmentHomeBinding
 import com.upc.pry20231067.models.Adapter.Place.PlaceAdapter
 import com.upc.pry20231067.models.PlaceResponse
-import com.upc.pry20231067.models.UpdateUserResponse
-import com.upc.pry20231067.models.UserResponse
 import com.upc.pry20231067.services.ApiService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.upc.pry20231067.services.RetrofitClient
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,10 +28,10 @@ import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment() {
 
-//    val url: String = "https://api-ar-app.onrender.com/places"
+    private val retrofitService = RetrofitClient.getRetrofit()
     private val placeList = mutableListOf<Place>()
     private lateinit var adapter: PlaceAdapter
-
+    lateinit var progressBar: ProgressBar
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -57,7 +54,6 @@ class HomeFragment : Fragment() {
 
 
         buttonsNavigation()
-        getPlaces()
 
         return root
     }
@@ -69,6 +65,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        progressBar = binding.fragmentHomeProgressBar
+        getPlaces()
         initRecyclerView(view)
     }
 
@@ -101,12 +99,14 @@ class HomeFragment : Fragment() {
             .build()
     }
 
-    private fun getPlaces(){
-        val call = getRetrofit().create(ApiService::class.java).getPlaces()
 
+    private fun getPlaces(){
+        progressBar.visibility = View.VISIBLE
+        val call = getRetrofit().create(ApiService::class.java).getPlaces()
         call.enqueue(object: Callback<PlaceResponse>{
             override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>){
                 if(response.isSuccessful){
+                    progressBar.visibility = View.GONE
                     val places = response.body()
                     val placeData = places?.data ?: emptyList()
                     placeList.clear()

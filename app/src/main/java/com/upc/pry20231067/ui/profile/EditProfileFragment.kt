@@ -1,38 +1,27 @@
 package com.upc.pry20231067.ui.profile
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
-import com.upc.pry20231067.MainActivity
-import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentEditProfileBinding
-import com.upc.pry20231067.databinding.FragmentProfileBinding
-import com.upc.pry20231067.models.LoginRequest
 import com.upc.pry20231067.models.UpdateUserRequest
 import com.upc.pry20231067.models.UpdateUserResponse
-import com.upc.pry20231067.models.UserResponse
 import com.upc.pry20231067.services.ApiService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.upc.pry20231067.services.RetrofitClient
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+import java.util.concurrent.TimeUnit
 
 class EditProfileFragment : Fragment() {
 
-
-
     var idUser: String? = ""
-    val idUserAux: String = "6515fce13559f1d4ca773037"
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -57,8 +46,15 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun getRetrofit(): Retrofit {
+        // Crear una instancia de OkHttpClient personalizada
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
+            .connectTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de conexión
+            .build()
+
         return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
             .build()
     }
 

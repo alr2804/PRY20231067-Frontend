@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.navigation.fragment.findNavController
 import com.upc.pry20231067.R
 import com.upc.pry20231067.databinding.FragmentAddReviewBinding
@@ -13,6 +14,7 @@ import com.upc.pry20231067.models.ReviewResponseUnique
 import com.upc.pry20231067.models.ReviewUniqueResponse
 import com.upc.pry20231067.models.UpdateUserResponse
 import com.upc.pry20231067.services.ApiService
+import com.upc.pry20231067.services.RetrofitClient
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +30,8 @@ class AddReviewFragment : Fragment() {
 
     private var _binding: FragmentAddReviewBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var progressBar: ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,8 +54,12 @@ class AddReviewFragment : Fragment() {
         return  binding.root
     }
 
-    private fun getRetrofit(): Retrofit {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        progressBar = binding.fragmentAddReviewProgressBar
+    }
 
+    private fun getRetrofit(): Retrofit {
         // Crear una instancia de OkHttpClient personalizada
         val okHttpClient = OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
@@ -65,7 +73,9 @@ class AddReviewFragment : Fragment() {
     }
 
 
+
     fun addReview(){
+        progressBar.visibility = View.VISIBLE
         val content = binding.etCommentAddReview.text.toString().trim()
         val rating = binding.ratingBarAddReview.rating
         val reviewReq = ReviewRequest(content, rating, idUser!!, idPlace!!)
@@ -74,7 +84,7 @@ class AddReviewFragment : Fragment() {
         call.enqueue(object: Callback<ReviewUniqueResponse> {
             override fun onResponse(call: Call<ReviewUniqueResponse>, response: Response<ReviewUniqueResponse>){
                 if(response.isSuccessful){
-
+                    progressBar.visibility = View.GONE
                     findNavController().navigate(AddReviewFragmentDirections.actionAddReviewFragmentToReviewFragment())
 
                 }
