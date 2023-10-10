@@ -27,8 +27,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment() {
-
-    private val retrofitService = RetrofitClient.getRetrofit()
     private val placeList = mutableListOf<Place>()
     private lateinit var adapter: PlaceAdapter
     lateinit var progressBar: ProgressBar
@@ -87,10 +85,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun getRetrofit(): Retrofit {
-        // Crear una instancia de OkHttpClient personalizada
         val okHttpClient = OkHttpClient.Builder()
-            .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
-            .connectTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de conexión
+            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
             .build()
 
         return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")

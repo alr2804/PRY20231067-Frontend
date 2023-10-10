@@ -1,10 +1,10 @@
-package com.upc.pry20231067.models.Adapter.Foro
+package com.upc.pry20231067.ui.foro.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.upc.pry20231067.R
-import com.upc.pry20231067.data.Foro.PostForo
+import com.upc.pry20231067.ui.foro.models.PostForo
 
 
 class ForoAdapter(private val postForoList: List<PostForo>): RecyclerView.Adapter<ForoViewHolder>() {

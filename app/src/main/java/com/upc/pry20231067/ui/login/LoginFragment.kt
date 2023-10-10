@@ -136,16 +136,6 @@ class LoginFragment : Fragment() {
 
         })
 
-//            if(call.isSuccessful){
-////                    val userInfo = responseLogin?.data
-////                    val intent = Intent(activity, PagesActivity()::class.java)
-////                    intent.putExtra("userID", responseLogin?.data?._id)
-////                    findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToNavGraph2())
-//
-//
-//            }else{
-//                Toast.makeText(context, "Invalid Login", Toast.LENGTH_SHORT)
-//            }
     }
 
 

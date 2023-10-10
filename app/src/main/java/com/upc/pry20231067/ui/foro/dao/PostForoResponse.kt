@@ -1,7 +1,7 @@
-package com.upc.pry20231067.models
+package com.upc.pry20231067.ui.foro.dao
 
 import com.google.gson.annotations.SerializedName
-import com.upc.pry20231067.data.Foro.PostForo
+import com.upc.pry20231067.ui.foro.models.PostForo
 
 data class PostForoResponse(
     @SerializedName("message")

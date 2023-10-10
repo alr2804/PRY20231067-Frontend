@@ -115,10 +115,54 @@
         android:id="@+id/foroFragment"
         android:name="com.upc.pry20231067.ui.foro.ForoFragment"
         android:label="ForoFragment"
-        tools:layout="@layout/fragment_foro"/>
+        tools:layout="@layout/fragment_foro">
+        <action
+            android:id="@+id/action_foroFragment_to_myPostForoFragment"
+            app:destination="@id/myPostForoFragment">
+
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/favoriteNewsFragment"
         android:name="com.upc.pry20231067.ui.news.FavoriteNewsFragment"
         android:label="FavoriteNewsFragment"
         tools:layout="@layout/fragment_favorite_news"/>
+    <fragment
+        android:id="@+id/myPostForoFragment"
+        android:name="com.upc.pry20231067.ui.foro.MyPostForoFragment"
+        android:label="MyPostForoFragment"
+        tools:layout="@layout/fragment_my_post_foro">
+        <action
+            android:id="@+id/action_myPostForoFragment_to_editPostForoFragment"
+            app:destination="@id/editPostForoFragment">
+            <argument
+                android:name="objPost"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_myPostForoFragment_to_createPostForoFragment"
+            app:destination="@id/createPostForoFragment">
+            <argument
+                android:name="idUser"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/editPostForoFragment"
+        android:name="com.upc.pry20231067.ui.foro.EditPostForoFragment"
+        android:label="EditPostForoFragment"
+        tools:layout="@layout/fragment_edit_post_foro">
+        <action
+            android:id="@+id/action_editPostForoFragment_to_myPostForoFragment"
+            app:destination="@id/myPostForoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createPostForoFragment"
+        android:name="com.upc.pry20231067.ui.foro.CreatePostForoFragment"
+        android:label="CreatePostForoFragment"
+        tools:layout="@layout/fragment_create_post_foro">
+        <action
+            android:id="@+id/action_createPostForoFragment_to_myPostForoFragment"
+            app:destination="@id/myPostForoFragment" />
+    </fragment>
 </navigation>

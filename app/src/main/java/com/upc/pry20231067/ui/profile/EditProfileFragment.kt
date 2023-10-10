@@ -76,7 +76,6 @@ class EditProfileFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdateUserResponse>, t: Throwable) {
-                // Maneja errores de comunicación, como falta de conexión o problemas en el servidor
             }
         })
 

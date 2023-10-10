@@ -16,7 +16,6 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -26,13 +25,24 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.upc.pry20231067.ArActivity
 import com.upc.pry20231067.R
 import com.upc.pry20231067.common.Utils.showToast
+import com.upc.pry20231067.data.Place.Place
 import com.upc.pry20231067.databinding.FragmentMapsBinding
+import com.upc.pry20231067.models.PlaceResponse
+import com.upc.pry20231067.services.ApiService
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 data class NamedLocation(val latLng: LatLng, val name: String)
 
 class MapsFragment : Fragment() , OnMapReadyCallback {
 
+    private val placeList = mutableListOf<Place>()
     private var _binding: FragmentMapsBinding? = null
 
     private val binding get() = _binding!!
@@ -44,11 +54,11 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
 
     // Sample locations from Peru
-    private val locationsList : MutableList<NamedLocation> = mutableListOf(
-        NamedLocation(LatLng(-12.0464, -77.0428), "Lima"),
-        NamedLocation(LatLng(-13.5319, -71.9675), "Cusco"),
-        NamedLocation(LatLng(-16.4090, -71.5375), "Arequipa")
-    )
+//    private val locationsList : MutableList<NamedLocation> = mutableListOf(
+//        NamedLocation(LatLng(-12.0464, -77.0428), "Lima"),
+//        NamedLocation(LatLng(-13.5319, -71.9675), "Cusco"),
+//        NamedLocation(LatLng(-16.4090, -71.5375), "Arequipa")
+//    )
 
 
 
@@ -66,7 +76,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 //            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation!!, 15f))
 //            updateOrSetMyLocationMarker(location)
 
-            updateOrSetLocationMarkers(locationsList);
+            updateOrSetLocationMarkers(placeList);
         }
 
 
@@ -83,9 +93,10 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
 
-
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        getPlaces()
 
 //        assign button to create arview activity
         binding.arButton.setOnClickListener {
@@ -97,12 +108,14 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
             if(currentLocation != null){
                 var valid = false
 
-                locationsList.add(NamedLocation(LatLng(currentLocation.latitude, currentLocation.longitude), "My Position"))
+                placeList.add(Place("", "My Position", "Esta es mi posición", "", currentLocation.longitude, currentLocation.latitude))
+//                locationsList.add(NamedLocation(LatLng(currentLocation.latitude, currentLocation.longitude), "My Position"))
 
                 //get all locations
-                for (place in locationsList){
-                    var topLeft = LatLng(place.latLng.latitude - variationZone, place.latLng.longitude -variationZone)     // Replace with the top-left corner of your bounding box
-                    var bottomRight = LatLng(place.latLng.latitude + variationZone, place.latLng.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
+//                for (place in locationsList){
+                for (place in placeList){
+                    var topLeft = LatLng(place.latitude - variationZone, place.longitude -variationZone)     // Replace with the top-left corner of your bounding box
+                    var bottomRight = LatLng(place.latitude + variationZone, place.latitude + variationZone) // Replace with the bottom-right corner of your bounding box
                     if (isWithinBoundingBox(currentLocation, topLeft, bottomRight)) valid = true;
                 }
 
@@ -164,7 +177,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         }
     }
 
-    private fun updateOrSetLocationMarkers(locations: MutableList<NamedLocation> = locationsList) {
+    private fun updateOrSetLocationMarkers(locations: MutableList<Place> = placeList) {
         // Ensure we have an initialized list of markers
         if (locationMarkers == null) {
             locationMarkers = mutableListOf()
@@ -172,17 +185,17 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
         // Update existing markers or add new ones
         for (i in locations.indices) {
-            val namedLocation = locations[i]
+            val placeLocation = locations[i]
             if (i < locationMarkers!!.size) {
                 // Update existing marker
-                locationMarkers!![i].position = namedLocation.latLng
-                locationMarkers!![i].title = namedLocation.name
+                locationMarkers!![i].position = LatLng(placeLocation.latitude, placeLocation.longitude)
+                locationMarkers!![i].title = placeLocation.name
             } else {
                 // Add new marker
                 val marker = mMap.addMarker(
                     MarkerOptions()
-                        .position(namedLocation.latLng)
-                        .title(namedLocation.name)
+                        .position(LatLng(placeLocation.latitude, placeLocation.longitude))
+                        .title(placeLocation.name)
                 )
                 if (marker != null) {
                     locationMarkers!!.add(marker)
@@ -235,6 +248,38 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         return if (location != null) LatLng(location.latitude, location.longitude) else null
+    }
+
+    private fun getRetrofit(): Retrofit {
+        // Crear una instancia de OkHttpClient personalizada
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de lectura
+            .connectTimeout(30, TimeUnit.SECONDS) // Configura el tiempo de espera de conexión
+            .build()
+
+        return Retrofit.Builder().baseUrl("https://api-ar-app.onrender.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+    }
+
+    private fun getPlaces(){
+        val call = getRetrofit().create(ApiService::class.java).getPlaces()
+        call.enqueue(object: Callback<PlaceResponse> {
+            override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>){
+                if(response.isSuccessful){
+                    val places = response.body()
+                    val placeData = places?.data ?: emptyList()
+                    binding.textViewMaps.text = placeData.toString()
+                    placeList.clear()
+                    placeList.addAll(placeData)
+                }
+            }
+            override fun onFailure(call: Call<PlaceResponse>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+
     }
 
 
