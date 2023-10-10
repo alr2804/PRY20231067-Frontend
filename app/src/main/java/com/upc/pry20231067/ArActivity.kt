@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableException
@@ -23,6 +24,7 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.MaterialFactory
+import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.rendering.ShapeFactory
 import com.google.ar.sceneform.rendering.ViewRenderable
 import com.google.ar.sceneform.ux.ArFragment
@@ -91,8 +93,11 @@ class ArActivity : AppCompatActivity() {
             val anchor = hitResult.createAnchor()
             val anchorNode = AnchorNode(anchor)
             anchorNode.setParent(arFragment.arSceneView.scene)
-            createCube(anchorNode, Vector3(0.1f, 0.1f, 0.1f))
+//            createCube(anchorNode, Vector3(0.1f, 0.1f, 0.1f))
+//            createModel(anchorNode, R.raw.untitled )
+            createModelWithText(anchorNode, R.raw.untitled)
         }
+
 
 
 
@@ -127,6 +132,8 @@ class ArActivity : AppCompatActivity() {
 
                 textView.setTextColor(android.graphics.Color.rgb(0, 0, 0))
                 textView.setBackgroundColor(android.graphics.Color.argb(50, 255, 255, 255))
+
+
                 // Create the text renderable
                 ViewRenderable.builder()
                     .setView(this, textView)
@@ -158,6 +165,110 @@ class ArActivity : AppCompatActivity() {
 
             }
     }
+
+    private fun createModelWithText(anchorNode: AnchorNode, modelResourceId: Int) {
+        ModelRenderable.builder()
+            .setSource(this, modelResourceId)
+            .build()
+            .thenAccept { modelRenderable ->
+                val modelNode = TransformableNode(arFragment.transformationSystem)
+                modelNode.renderable = modelRenderable
+                modelNode.setParent(anchorNode)
+
+                // Programmatically create a TextView
+                val textView = TextView(this).apply {
+                    text = "Your Text"
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                    setTextColor(android.graphics.Color.rgb(0, 0, 0))
+                    setBackgroundColor(android.graphics.Color.argb(50, 255, 255, 255))
+                }
+
+                // Create the text renderable
+                ViewRenderable.builder()
+                    .setView(this, textView)
+                    .build()
+                    .thenAccept { viewRenderable ->
+                        Node().apply {
+                            renderable = viewRenderable
+                            setParent(modelNode)
+                            // Position the text slightly above the model (adjust as needed)
+                            localPosition = Vector3(0f, 0.15f, 0f)
+                        }
+                    }
+
+                modelNode.setOnTapListener { _, _ ->
+                    if (modelNode == arFragment.transformationSystem.selectedNode) {
+                        selectedNode = modelNode
+                        deleteButton.visibility = View.VISIBLE
+                    } else {
+                        deleteButton.visibility = View.GONE
+                        selectedNode = null
+                    }
+                }
+
+                modelNode.select()
+            }
+            .exceptionally {
+                Toast.makeText(this, "Error loading the model", Toast.LENGTH_SHORT).show()
+                null
+            }
+    }
+
+
+
+
+//    private fun createModel(anchorNode: AnchorNode, modelResourceId: Int) {
+//        ModelRenderable.builder()
+//            .setSource(this, modelResourceId)
+//            .build()
+//            .thenAccept { renderable ->
+//                val node = TransformableNode(arFragment.transformationSystem)
+//                node.renderable = renderable
+//                node.setParent(anchorNode)
+//
+//            }
+//            .exceptionally {
+//                Toast.makeText(this, "Error loading the model", Toast.LENGTH_LONG).show()
+//                null
+//            }
+//    }
+
+//    private fun createModel(anchorNode: AnchorNode, modelResourceId: Int) {
+//        ModelRenderable.builder()
+//            .setSource(this, modelResourceId)
+//            .build()
+//            .thenAccept { renderable ->
+//                val modelNode = TransformableNode(arFragment.transformationSystem)
+//                modelNode.renderable = renderable
+//                modelNode.setParent(anchorNode)
+//
+//                // Create and set up the TextView
+//                val textView = TextView(this).apply {
+//                    text = "Your Text Here"
+//                    textSize = 16f
+//                    setBackgroundColor(ContextCompat.getColor(this@ArActivity, android.R.color.transparent))
+//                }
+//
+//                // Convert the TextView to a ViewRenderable
+//                ViewRenderable.builder()
+//                    .setView(this, textView)
+//                    .build()
+//                    .thenAccept { viewRenderable ->
+//                        Node().apply {
+//                            renderable = viewRenderable
+//                            setParent(modelNode)
+//                            localPosition = Vector3(0f, 0.1f, 0f)  // Adjust as needed
+//                        }
+//                    }
+//            }
+//            .exceptionally {
+//                Toast.makeText(this, "Error loading the model", Toast.LENGTH_SHORT).show()
+//                null
+//            }
+//    }
 
     private fun capturePhoto(sceneView: ArSceneView) {
         val bitmap = Bitmap.createBitmap(sceneView.width, sceneView.height, Bitmap.Config.ARGB_8888)
