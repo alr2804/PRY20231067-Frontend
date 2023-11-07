@@ -2,6 +2,7 @@ package com.upc.pry20231067
 
 import android.content.ContentValues
 import android.graphics.Bitmap
+import android.icu.text.CaseMap.Title
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -50,6 +51,17 @@ class ArActivity : AppCompatActivity() {
     private var selectedNode: TransformableNode? = null
     private lateinit var deleteButton: Button
 
+    data class Item(val id: Int, val name: String, val description: String)
+
+    private val itemsArray = arrayOf(
+        Item(R.raw.elemento1, "Item 1", "Description of Item 1"),
+        Item(R.raw.elemento2, "Item 2", "Description of Item 2"),
+        Item(R.raw.untitled, "Item 3", "Description of Item 2"),
+        Item(R.raw.andy, "Item 4", "Description of Item 2"),
+    )
+
+    private var currentIndex = 0
+
 
 
 
@@ -95,7 +107,12 @@ class ArActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
 //            createCube(anchorNode, Vector3(0.1f, 0.1f, 0.1f))
 //            createModel(anchorNode, R.raw.untitled )
-            createModelWithText(anchorNode, R.raw.untitled)
+//            createModelWithText(anchorNode, R.raw.untitled)
+
+
+            createModelWithText(anchorNode, itemsArray[currentIndex].id, itemsArray[currentIndex].name)
+            currentIndex = (currentIndex + 1) % itemsArray.size
+
         }
 
 
@@ -166,7 +183,7 @@ class ArActivity : AppCompatActivity() {
             }
     }
 
-    private fun createModelWithText(anchorNode: AnchorNode, modelResourceId: Int) {
+    private fun createModelWithText(anchorNode: AnchorNode, modelResourceId: Int, title: String) {
         ModelRenderable.builder()
             .setSource(this, modelResourceId)
             .build()
@@ -177,7 +194,7 @@ class ArActivity : AppCompatActivity() {
 
                 // Programmatically create a TextView
                 val textView = TextView(this).apply {
-                    text = "Your Text"
+                    text = title
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
@@ -195,7 +212,7 @@ class ArActivity : AppCompatActivity() {
                             renderable = viewRenderable
                             setParent(modelNode)
                             // Position the text slightly above the model (adjust as needed)
-                            localPosition = Vector3(0f, 0.15f, 0f)
+                            localPosition = Vector3(0f, 0.15f, 0.15f)
                         }
                     }
 
