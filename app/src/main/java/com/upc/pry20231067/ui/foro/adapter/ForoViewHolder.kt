@@ -9,7 +9,6 @@ import com.upc.pry20231067.ui.foro.models.PostForo
 
 class ForoViewHolder(view: View): ViewHolder(view) {
 
-    val titleItem = view.findViewById<TextView>(R.id.tv_title_item_post_foro)
     val contentItem = view.findViewById<TextView>(R.id.tv_content_item_post_foro)
 
     fun render(newModel: PostForo){
@@ -18,7 +17,7 @@ class ForoViewHolder(view: View): ViewHolder(view) {
         itemView.setOnClickListener{
             print("Click item")
 //            Navigation.findNavController(itemView).navigate(HomeFragmentDirections.actionHomeFragmentToPlaceItemFragment())
-            Toast.makeText(titleItem.context, "foro view holder", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contentItem.context, "foro view holder", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -51,7 +51,6 @@ class HomeFragment : Fragment() {
         val userIdReceived = activity?.intent?.getStringExtra("idUser")
 
 
-        buttonsNavigation()
 
         return root
     }
@@ -68,13 +67,6 @@ class HomeFragment : Fragment() {
         initRecyclerView(view)
     }
 
-    fun buttonsNavigation(){
-        val btnToForo = binding.btnToForo
-        btnToForo.setOnClickListener{
-            findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToForoFragment())
-        }
-
-    }
 
     fun initRecyclerView(view: View){
         val recyclerView =view.findViewById<RecyclerView>(R.id.recycler_view)

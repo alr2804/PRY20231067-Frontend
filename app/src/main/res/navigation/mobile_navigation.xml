@@ -17,9 +17,6 @@
                 android:name="idPlace"
                 app:argType="string" />
         </action>
-        <action
-            android:id="@+id/action_navigation_home_to_foroFragment"
-            app:destination="@id/foroFragment" />
     </fragment>
 
     <fragment
@@ -43,6 +40,9 @@
         <action
             android:id="@+id/action_navigation_profile_to_souvenirFragment"
             app:destination="@id/souvenirFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_foroFragment"
+            app:destination="@id/foroFragment" />
     </fragment>
     <fragment
         android:id="@+id/placeItemFragment"

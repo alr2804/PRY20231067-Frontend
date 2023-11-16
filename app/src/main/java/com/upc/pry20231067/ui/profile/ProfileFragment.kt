@@ -57,6 +57,12 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(ProfileFragmentDirections.actionNavigationProfileToSouvenirFragment())
         }
 
+        val cardForo = binding.cardForo
+        cardForo.setOnClickListener{
+            findNavController().navigate((ProfileFragmentDirections.actionNavigationProfileToForoFragment()))
+        }
+
+
         val btnEdit = binding.btnEditProfile
         btnEdit.setOnClickListener {
             findNavController().navigate(ProfileFragmentDirections.actionNavigationProfileToEditProfileFragment("$idUser"))

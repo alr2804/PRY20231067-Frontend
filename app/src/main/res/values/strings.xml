@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PRY20231067</string>
+    <string name="app_name">PRY20231067 AR App</string>
     <string name="title_home">Home</string>
     <string name="title_notifications">Notifications</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -55,7 +55,7 @@
 
     <!-- Auth-->
     <string name="input_hint_firstname">Nombre</string>
-    <string name="input_hint_lastname">Torres</string>
+    <string name="input_hint_lastname">Apellido</string>
     <string name="input_hint_email">Correo</string>
     <string name="input_hint_username">Usuario</string>
     <string name="input_hint_password">Contraseña</string>

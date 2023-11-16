@@ -38,7 +38,6 @@ class CreatePostForoFragment : Fragment() {
 
         progressBar = binding.fragmentCreatePostforoProgressBar
         idUser = arguments?.getString("idUser")
-        binding.headerTitleCreatePostForo.text = idUser
         val btnSubmit = binding.createPostForoSubmit
         btnSubmit.setOnClickListener {
             sendCreatePost()

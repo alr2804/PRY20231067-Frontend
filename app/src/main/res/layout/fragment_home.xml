@@ -24,6 +24,7 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="4dp"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_height="wrap_content">
@@ -41,47 +42,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ly_button_explore"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ly_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_to_news"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_button"
-            android:text="News"
-            android:padding="8dp"
-            android:layout_marginEnd="20dp"
-            />
-
-        <Button
-            android:id="@+id/btn_to_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile"
-            android:padding="8dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/rounded_button"
-            />
-
-        <Button
-            android:id="@+id/btn_to_foro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Foro"
-            android:padding="8dp"
-            android:background="@drawable/rounded_button"
-            />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ly_recycler_view"
@@ -90,9 +51,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="400dp"
+        app:layout_constraintHeight_max="600dp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintTop_toBottomOf="@+id/ly_button_explore"
+        app:layout_constraintTop_toBottomOf="@+id/ly_title"
         android:layout_marginTop="30dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
