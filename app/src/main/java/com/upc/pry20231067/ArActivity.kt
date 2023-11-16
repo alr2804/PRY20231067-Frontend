@@ -2,6 +2,7 @@ package com.upc.pry20231067
 
 import android.content.ContentValues
 import android.graphics.Bitmap
+import android.icu.text.CaseMap.Title
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,9 +14,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.Snackbar.make
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.sceneform.AnchorNode
@@ -49,6 +53,28 @@ class ArActivity : AppCompatActivity() {
     // Reference to the currently selected node
     private var selectedNode: TransformableNode? = null
     private lateinit var deleteButton: Button
+
+    data class Item(val id: Int, val name: String, val description: String)
+
+    private val itemsArray = arrayOf(
+        Item(R.raw.elemento1, "Botellas Escultóricas Gemelas", "Descripción: Cerámica conectada en forma de aves.\n" +
+                "Significado: Simboliza lo divino; posiblemente usadas en ceremonias.\n" +
+                "Era: 100-700 d.C."),
+        Item(R.raw.elemento2, "Falsas Cabezas de Madera", "Descripción: Tallas de madera para rituales funerarios.\n" +
+                "Significado: Representan almas o compañeros para el más allá.\n" +
+                "Era: 100 a.C.-800 d.C."),
+        Item(R.raw.elemento3, "Cerámica en Forma de Venado", "Descripción: Recipiente cerámico con forma realista de venado.\n" +
+                "Significado: Símbolo de fertilidad y abundancia.\n" +
+                "Era: 100-800 d.C."),
+        Item(R.raw.elemento4, "Escultura de Madera Chimú", "Descripción: Figura tallada en madera de significación religiosa y social.\n" +
+                "Significado: Representa deidades o autoridades.\n" +
+                "Era: 1100-1470 d.C."),
+        Item(R.raw.elemento5, "Cántaro Tricolor Cara Gollete", "Descripción: Vasija tricolor con cara en el gollete.\n" +
+                "Significado: Utilizado para chicha en rituales/ofrendas.\n" +
+                "Era: 1400-1532 d.C."),
+    )
+
+    private var currentIndex = 0
 
 
 
@@ -95,7 +121,16 @@ class ArActivity : AppCompatActivity() {
             anchorNode.setParent(arFragment.arSceneView.scene)
 //            createCube(anchorNode, Vector3(0.1f, 0.1f, 0.1f))
 //            createModel(anchorNode, R.raw.untitled )
-            createModelWithText(anchorNode, R.raw.untitled)
+//            createModelWithText(anchorNode, R.raw.untitled)
+
+
+            createModelWithText(anchorNode, itemsArray[currentIndex].id, itemsArray[currentIndex].name)
+            showDialog(itemsArray[currentIndex].description)
+            currentIndex = (currentIndex + 1) % itemsArray.size
+
+
+
+
         }
 
 
@@ -107,6 +142,18 @@ class ArActivity : AppCompatActivity() {
             capturePhoto(arFragment.arSceneView)
         }
 
+    }
+
+    private fun showDialog(text:String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(text)
+            .setPositiveButton("Aceptar") { dialog, id ->
+                // Acción para el botón Aceptar
+            }
+
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun createCube(anchorNode: AnchorNode, cubeSize: Vector3) {
@@ -166,7 +213,7 @@ class ArActivity : AppCompatActivity() {
             }
     }
 
-    private fun createModelWithText(anchorNode: AnchorNode, modelResourceId: Int) {
+    private fun createModelWithText(anchorNode: AnchorNode, modelResourceId: Int, title: String) {
         ModelRenderable.builder()
             .setSource(this, modelResourceId)
             .build()
@@ -177,7 +224,7 @@ class ArActivity : AppCompatActivity() {
 
                 // Programmatically create a TextView
                 val textView = TextView(this).apply {
-                    text = "Your Text"
+                    text = title
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
@@ -195,7 +242,7 @@ class ArActivity : AppCompatActivity() {
                             renderable = viewRenderable
                             setParent(modelNode)
                             // Position the text slightly above the model (adjust as needed)
-                            localPosition = Vector3(0f, 0.15f, 0f)
+                            localPosition = Vector3(0f, 0.15f, 0.15f)
                         }
                     }
 
