@@ -38,23 +38,37 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="0dp"
 
+        app:layout_constraintBottom_toTopOf="@+id/ll_btnToAR"
         app:layout_constraintTop_toBottomOf="@+id/titleViewMap"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
         />
 
-    <Button
-        android:id="@+id/arButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Go to ar"
-        app:layout_constraintEnd_toEndOf="parent"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ll_btnToAR"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map" />
+        app:layout_constraintTop_toBottomOf="@+id/map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/arButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:text="Go to ar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/map"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

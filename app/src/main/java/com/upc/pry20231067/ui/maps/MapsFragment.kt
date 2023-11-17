@@ -175,6 +175,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
 
 
         val dataLocalitation = arguments?.getString("localitation")
+        setMyLocationEnabled()
         if (dataLocalitation.isNullOrBlank()) {
             setMyLocationEnabled()
         }else {
