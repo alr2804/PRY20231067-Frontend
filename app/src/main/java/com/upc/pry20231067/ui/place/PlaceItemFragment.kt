@@ -23,6 +23,8 @@ class PlaceItemFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentPlaceItemBinding.inflate(layoutInflater, container, false)
 
+
+
         val btn_ver_reseñas = binding.btnResenas
         btn_ver_reseñas.setOnClickListener{
             findNavController().navigate(PlaceItemFragmentDirections.actionPlaceItemFragmentToReviewFragment("$_idPlace"))
@@ -42,11 +44,23 @@ class PlaceItemFragment : Fragment() {
         val description = itemPlace?.substringAfter("description=")?.substringBefore(",")
         val photo = itemPlace?.substringAfter("photo=")?.substringBefore(",")
 
+        val longitude = itemPlace?.substringAfter("longitude=")?.substringBefore(",")
+        val latitude = itemPlace?.substringAfter("latitude=")
+
+        data class Localitation(val name: String?, val latitude: String?, val longitude: String?)
+
+        val objLocalitation = Localitation(name = name,latitude = latitude, longitude = longitude, )
+
 
         binding.titlePlaceItem.text = name
         binding.descriptionPlaceItem.text = description
         val img_place_item = binding.imgPlaceItem
         Glide.with(img_place_item.context).load(photo).into(img_place_item)
+
+        val btnToMaps = binding.btnToMaps
+        btnToMaps.setOnClickListener {
+            findNavController().navigate((PlaceItemFragmentDirections.actionPlaceItemFragmentToNavigationMaps(objLocalitation.toString())))
+        }
     }
 
 }

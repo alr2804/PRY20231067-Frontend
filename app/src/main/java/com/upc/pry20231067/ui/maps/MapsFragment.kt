@@ -16,6 +16,7 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -66,6 +67,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private var myLocationMarker: Marker? = null
 
+
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
 
@@ -97,6 +99,9 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         val root: View = binding.root
 
         getPlaces()
+
+
+
 
 //        assign button to create arview activity
         binding.arButton.setOnClickListener {
@@ -145,8 +150,15 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+
+        if (checkLocationPermission(view.context)){
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this)
+        } else {
+            requestLocationPermission()
+        }
+
+
 
 //        updateOrSetLocationMarkers(locationsList);
     }
@@ -161,7 +173,22 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         layoutParams?.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
         layoutParams?.setMargins(0, 0, 30, 180)
 
-        setMyLocationEnabled()
+
+        val dataLocalitation = arguments?.getString("localitation")
+        if (dataLocalitation.isNullOrBlank()) {
+            setMyLocationEnabled()
+        }else {
+            val name = dataLocalitation?.substringAfter("name=")?.substringBefore(",")
+            val latitude = dataLocalitation?.substringAfter("latitude=")?.substringBefore(")")
+            val longitude = dataLocalitation?.substringAfter("longitude=")?.substringBefore(")")
+            val puntoLatLng = LatLng(latitude!!.toDouble(), longitude!!.toDouble())
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(puntoLatLng, 18f))
+
+            // Add new marker
+            mMap.addMarker(MarkerOptions().position(puntoLatLng).title(name))
+        }
+
+
     }
 
     private fun updateOrSetMyLocationMarker(location: Location) {
@@ -175,6 +202,22 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
         } else {
             myLocationMarker?.position = latLng
         }
+    }
+
+    fun checkLocationPermission(context: Context): Boolean {
+        val permissionStatus = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        return permissionStatus == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            1001
+        )
     }
 
     private fun updateOrSetLocationMarkers(locations: MutableList<Place> = placeList) {
@@ -270,7 +313,7 @@ class MapsFragment : Fragment() , OnMapReadyCallback {
                 if(response.isSuccessful){
                     val places = response.body()
                     val placeData = places?.data ?: emptyList()
-                    binding.textViewMaps.text = placeData.toString()
+
                     placeList.clear()
                     placeList.addAll(placeData)
                 }

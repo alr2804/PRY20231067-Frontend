@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,62 +54,69 @@
         app:layout_constraintTop_toBottomOf="@+id/upPart"
         >
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
+            android:layout_height="match_parent"
             >
 
-            <TextView
-                android:id="@+id/title_place_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Centro de Lima"
-                android:textSize="30sp"
-                />
-
-            <TextView
-                android:id="@+id/description_place_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Una de las principales atracciones de las ciudades más longevas a lo largo del mundo entero, es la visita a su Centro Histórico."
-                android:textSize="15sp"
-                />
-
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/rounded_button_secondary"
-                android:text="@string/place_item_btn_see_on_map"
-                android:drawableEnd="@drawable/ic_maps"
-                android:padding="10dp"
-                />
-
-            <Button
-                android:id="@+id/btnResenas"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="20dp"
-                android:textColor="@color/white_app"
-                android:background="@color/black_app_secondary"
-                android:text="@string/place_item_btn_see_reviews"
-                android:drawableEnd="@drawable/ic_arrow_forward"
-                android:drawableTint="@color/white_app"
-                android:padding="10dp"
-                />
+                android:gravity="center"
+                >
+
+                <TextView
+                    android:id="@+id/title_place_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Centro de Lima"
+                    android:textSize="30sp"
+                    />
+
+                <TextView
+                    android:id="@+id/description_place_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Una de las principales atracciones de las ciudades más longevas a lo largo del mundo entero, es la visita a su Centro Histórico."
+                    android:textSize="15sp"
+                    />
 
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <Button
+                    android:id="@+id/btnToMaps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/rounded_button_secondary"
+                    android:text="@string/place_item_btn_see_on_map"
+                    android:drawableEnd="@drawable/ic_maps"
+                    android:padding="10dp"
+                    />
+
+                <Button
+                    android:id="@+id/btnResenas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/white_app"
+                    android:background="@color/black_app_secondary"
+                    android:text="@string/place_item_btn_see_reviews"
+                    android:drawableEnd="@drawable/ic_arrow_forward"
+                    android:drawableTint="@color/white_app"
+                    android:padding="10dp"
+                    />
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </ScrollView>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

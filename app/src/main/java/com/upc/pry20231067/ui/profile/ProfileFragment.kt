@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -142,6 +143,7 @@ class ProfileFragment : Fragment() {
                     binding.tvUsername.text = username
                     binding.tvEmail.text = email
                     Glide.with(binding.imageView3.context).load(urlImageProfile).into(binding.imageView3)
+                    binding.imageView3.scaleType = ImageView.ScaleType.FIT_XY
 
 
                 }

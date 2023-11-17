@@ -56,6 +56,13 @@
                 android:name="idPlace"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_placeItemFragment_to_navigation_maps"
+            app:destination="@id/navigation_maps">
+            <argument
+                android:name="localitation"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/reviewFragment"
